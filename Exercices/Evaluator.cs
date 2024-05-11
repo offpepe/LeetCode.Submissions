@@ -5,22 +5,26 @@ using System.Reflection;
 
 namespace LeetCode.Exercices;
 
-public class Evaluator<TClass>(TClass target,(object[], object)[] cases)
+public class Evaluator<TClass>(TClass target, IEnumerable<(object, object)> cases)
     where TClass : class 
 {
-    private readonly IEnumerable<MethodInfo> _methods = target.GetType().GetMethods();
+    private readonly IEnumerable<MethodInfo> _methods = target.GetType().GetMethods().Where(p => p.Name.Contains("Implementation"));
     private readonly Type _targetType = target.GetType();
-    private readonly (object[], object)[] _cases = cases;
     private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
-
+    
     public void Evaluate()
     {
         var description = _targetType.GetCustomAttribute<DescriptionAttribute>();
+        var title = _targetType.GetCustomAttribute<DisplayNameAttribute>();
         Console.Title = _targetType.Name;
-        Console.WriteLine("EVALUATING EXERCISE: {0}", _targetType.Name);
+        Console.ForegroundColor = ConsoleColor.Black;
+        Console.BackgroundColor = ConsoleColor.White;
+        Console.WriteLine(Centralize(title?.DisplayName ?? _targetType.Name));
+        Console.ResetColor();
+        Console.ForegroundColor = ConsoleColor.Yellow;
         if (description != null)
         {
-            Console.WriteLine(description);
+            Console.WriteLine(description.Description);
         }
         Console.WriteLine("\n");
         foreach (var method in _methods) Validate(method);
@@ -29,23 +33,51 @@ public class Evaluator<TClass>(TClass target,(object[], object)[] cases)
     private void Validate(MethodInfo submission)
     {
         var description = submission.GetCustomAttribute<DescriptionAttribute>();
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine(submission.Name);
+        var displayName = submission.GetCustomAttribute<DisplayNameAttribute>();
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.Write("NAME: ");
+        Console.ForegroundColor = ConsoleColor.DarkBlue;
+        Console.WriteLine("{0}", displayName?.DisplayName ?? submission.Name);
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.Write("DESCRIPTION:");
         Console.ForegroundColor = description == null ? ConsoleColor.Gray : ConsoleColor.DarkYellow;
-        Console.WriteLine((description == null ? "NOT SUBMITTED" : description.Description) + "\n");
+        Console.WriteLine(" {0} \n", description?.Description ??"NOT SUBMITTED");
         foreach (var subCase in cases)
         {
-            var (parameters, expected) = subCase;
+            var (parameter, expected) = subCase;
             _stopwatch.Restart();
-            var res = submission.Invoke(parameters, BindingFlags.Default, null, parameters,
+            var res = submission.Invoke(parameter, BindingFlags.Default, null, new[]{ parameter },
                 CultureInfo.InvariantCulture);
             _stopwatch.Stop();
-            var success = res == expected;
+            var success = res?.ToString() == expected.ToString();
             var avaliation = success ? "[SUCCESS]" : "[FAILED] ";
+            var paramStr = parameter is Array ? string.Join(",", parameter) : parameter.ToString(); 
             Console.ForegroundColor = success ? ConsoleColor.DarkGreen: ConsoleColor.Red;
-            Console.WriteLine("{0} Input: {1} | Expected: {2} | Received: {3} | Execution time: {4}", avaliation, string.Join(", ",parameters), expected, res, _stopwatch.Elapsed);
+            Console.WriteLine("{0} Input: {1} | Expected: {2} | Received: {3} | Execution time: {4}", avaliation, AddPaddings(paramStr, 8), AddPaddings(expected, 2), AddPaddings(res, 2), _stopwatch.Elapsed);
+        }
+        Console.ForegroundColor = ConsoleColor.DarkCyan;
+        Console.WriteLine("================\n");
+    }
 
+
+    private static string AddPaddings(object? obj, short size)
+    {
+        var param = obj!.ToString() ?? string.Empty;
+        if (param.Length >= size) return param;
+        while (param.Length < size)
+        {
+            param += ' ';
+        }
+        return param;
+    }
+
+    private static string Centralize(string content)
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            content = ' ' + content + ' ';
         }
 
+        return content;
     }
 }

@@ -1,16 +1,12 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
 
 namespace LeetCode.Exercices;
 
-public static class LengthOfLongestSubstring
+[DisplayName("Longest Substring Without Repeating Characters")]
+[Description("Given a string s, find the length of the longest substring without repeating characters.")]
+public class LengthOfLongestSubstring
 {
-    private static readonly (string, int)[] _cases = new[]
-    {
+    public (string, int)[] cases => new [] {
         ("abcabcbb", 3),
         ("bbbbb", 1),
         ("pwwkew", 3),
@@ -21,41 +17,8 @@ public static class LengthOfLongestSubstring
         ("dvdf", 3),
         ("tmmzuxt", 5),
     };
-    public static void Run()
-    {
-        var methods = typeof(LengthOfLongestSubstring).GetMethods().Where(m => m.Name.Contains("Implementation"));
-        foreach (var method in methods)
-        {
-            Eval(method);
-        }
-    }
 
-    private static void Eval(MethodInfo submission)
-    {
-        var description = submission.GetCustomAttribute<DescriptionAttribute>();
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine(submission.Name);
-        Console.ForegroundColor = description == null ? ConsoleColor.Gray : ConsoleColor.DarkYellow;
-        Console.WriteLine((description == null ? "NOT SUBMITTED" : description.Description) + "\n");
-        var stopWatch = new Stopwatch();
-        foreach (var caset in _cases)
-        {
-            var (input, expected) = caset;
-            stopWatch.Start();
-            var res = ((int?) submission.Invoke(input, BindingFlags.Default, null, new object?[] { input }, CultureInfo.InvariantCulture)) ?? -1;
-            stopWatch.Stop();
-            var avaliation = res == expected ? "[SUCCESS]" : "[FAILED] ";
-            Console.ForegroundColor = res == expected ? ConsoleColor.DarkGreen: ConsoleColor.Red;
-            Console.WriteLine("{0} Data: {1} | Expected: {2} | Received: {3} | Execution time: {4}", avaliation, input, expected, res, stopWatch.Elapsed);
-            Console.ResetColor();
-            stopWatch.Reset();
-        }
-
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine("================================\n");
-        Console.ResetColor();
-    }
-    
+    [DisplayName("Nested loops")]
     [Description("Beats 5.96% c# users in runtime and beats 12.22% c# users in memory")]
     public static int Implementation1(string s)
     {
@@ -95,6 +58,7 @@ public static class LengthOfLongestSubstring
         return size;
     }
     
+    [DisplayName("Dictionary char x pos submission")]
     [Description("Beats 72.72% c# users in runtime and beats 79.57% c# users in memory")]
     public static int Implementation2(string str)
     {
@@ -110,7 +74,6 @@ public static class LengthOfLongestSubstring
             var res = (short) (right - left + 1);
             if (res > max) max = res;
         }
-
         return max;
     }
 }

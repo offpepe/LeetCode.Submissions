@@ -4,10 +4,11 @@ namespace LeetCode;
 
 class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
-        // TwoSum.Run();
-        // RemoveKDigits.Run();
-        LengthOfLongestSubstring.Run();
+        var target = new LengthOfLongestSubstring();
+        var evaluator = new Evaluator<LengthOfLongestSubstring>(target,
+            target.cases.Select(tuple => ((object) tuple.Item1, (object) tuple.Item2)));
+        evaluator.Evaluate();
     }
 }
