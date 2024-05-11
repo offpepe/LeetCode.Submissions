@@ -1,21 +1,24 @@
 ﻿using System.ComponentModel;
+using LeetCode.Attributes;
+using LeetCode.Interfaces;
 
-namespace LeetCode.Exercices;
-
+namespace LeetCode.Exercises;
+[Code(3)]
+[Completed(true)]
 [DisplayName("Longest Substring Without Repeating Characters")]
 [Description("Given a string s, find the length of the longest substring without repeating characters.")]
-public class LengthOfLongestSubstring
+public sealed class LengthOfLongestSubstring : IExercise
 {
-    public (string, int)[] cases => new [] {
-        ("abcabcbb", 3),
-        ("bbbbb", 1),
-        ("pwwkew", 3),
-        ("", 0),
-        (" ", 1),
-        ("abcdefg", 7),
-        ("aab", 2),
-        ("dvdf", 3),
-        ("tmmzuxt", 5),
+    public object[][] Cases => new object[][] {
+        new object[]{3, "abcabcbb"},
+        new object[]{1, "bbbbb"},
+        new object[]{3, "pwwkew"},
+        new object[]{0, ""},
+        new object[]{1, " "},
+        new object[]{7, "abcdefg"},
+        new object[]{2, "aab"},
+        new object[]{3, "dvdf"},
+        new object[]{5, "tmmzuxt"},
     };
 
     [DisplayName("Nested loops")]

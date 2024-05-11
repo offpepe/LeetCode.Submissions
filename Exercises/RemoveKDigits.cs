@@ -1,45 +1,26 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.ComponentModel;
+using LeetCode.Attributes;
+using LeetCode.Interfaces;
 
-namespace LeetCode.Exercices;
-
-public static class RemoveKDigits
+namespace LeetCode.Exercises;
+[Completed(false)]
+[DisplayName("Remove K Digits")]
+[Code(457)]
+[Description("Given string num representing a non-negative integer num, and an integer k, return the smallest possible integer after removing k digits from num.")]
+public sealed class RemoveKDigits : IExercise
 {
-    private static readonly Stopwatch sw = new();
-    private static readonly (string, int, string)[] Scenarios = new (string, int, string)[]
+    public object[][] Cases => new[]
     {
-        ("1432219", 3, "1219"),
-        ("10200", 1, "200"),
-        ("10",  2, "0"),
-        ("112", 1, "11"),
-        ("10001", 4, "0"),
-        ("43214321", 4, "1321")
+        new object[]{"1219", "1432219", 3},
+        new object[]{"200", "10200", 1},
+        new object[]{"0", "10", 2},
+        new object[]{"11", "112", 1},
+        new object[]{"0", "10001", 4},
+        new object[]{"1321", "43214321", 4},
     };
-    public static void Run()
-    {
-        Console.WriteLine("FIRST");
-        foreach (var scenario in Scenarios)
-        {
-            sw.Start();
-            var (num, k, expected) = scenario;
-            var result = Third(num, k);
-            sw.Stop();
-            if (result != expected)
-            {
-                Console.WriteLine("({0}) [FAILED] EXPECTED {1} - {2} = {3} || RECEIVED: {1} - {2} = {4}", sw.Elapsed, num, k, expected, result);
-                sw.Reset();
-                continue;
-            }
-            Console.WriteLine("({0}) {1} - {2} = {3}", sw.Elapsed, num, k, result);
-            sw.Reset();
-        }
-    }
     
-    private static string First(string num, int k)
+    public static string Implementation1(string num, int k)
     {
-        
         var result = int.Parse(num);
         if (k == num.Length) return "0";
         var numSize = num.Length - k;
@@ -62,7 +43,7 @@ public static class RemoveKDigits
         return result.ToString();
     }
     
-    private static string Second(string num, int k)
+    public static string Implementation2(string num, int k)
     {
         var result = int.Parse(num);
         if (k == num.Length) return "0";
@@ -86,7 +67,7 @@ public static class RemoveKDigits
         return result.ToString();
     }
 
-    private static string Third(string num, int k)
+    public static string Implementation3(string num, int k)
     {
         if (k == num.Length) return "0";
         var result = int.Parse(num);
