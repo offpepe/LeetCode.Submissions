@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using LeetCode.Interfaces;
 
 namespace LeetCode;
@@ -33,7 +32,7 @@ public class Evaluator<TClass>(TClass target)
         foreach (var method in _methods) Validate(method);
     }
 
-    private void Validate(MethodInfo submission)
+    private void Validate(MethodBase submission)
     {
         var description = submission.GetCustomAttribute<DescriptionAttribute>();
         var displayName = submission.GetCustomAttribute<DisplayNameAttribute>();
@@ -42,7 +41,7 @@ public class Evaluator<TClass>(TClass target)
         Console.ForegroundColor = ConsoleColor.DarkMagenta;
         Console.WriteLine("{0}", displayName?.DisplayName ?? submission.Name);
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write("DESCRIPTION:");
+        Console.Write("RESULT:");
         Console.ForegroundColor = description == null ? ConsoleColor.Gray : ConsoleColor.Yellow;
         Console.WriteLine(" {0} \n", description?.Description ??"NOT SUBMITTED");
         foreach (var subCase in target.Cases)
@@ -67,7 +66,7 @@ public class Evaluator<TClass>(TClass target)
                     : expected.ToString()!;
                 Console.ForegroundColor = success ? ConsoleColor.DarkGreen : ConsoleColor.Red;
                 Console.WriteLine("{0} Input: {1} | Expected: {2} | Received: {3} | Execution time: {4}", avaliation,
-                    AddPaddings(paramStr, 8), AddPaddings(expectStr, 2), AddPaddings(resultStr, 2), _stopwatch.Elapsed);
+                    paramStr.AddPaddings(8), expectStr.AddPaddings(2), resultStr.AddPaddings(2), _stopwatch.Elapsed);
             }
             catch (Exception ex)
             {
@@ -85,21 +84,9 @@ public class Evaluator<TClass>(TClass target)
             
         }
         Console.ForegroundColor = ConsoleColor.DarkCyan;
-        Console.WriteLine("================");
+        Console.WriteLine("================\n\n");
     }
     
-
-    private static string AddPaddings(object? obj, short size)
-    {
-        var param = obj!.ToString() ?? string.Empty;
-        if (param.Length >= size) return param;
-        while (param.Length < size)
-        {
-            param += ' ';
-        }
-        return param;
-    }
-
     private static string ConvertParam(object param) => param switch
     {
         Array arr => string.Join(", ", ConvertArrType(arr)),
