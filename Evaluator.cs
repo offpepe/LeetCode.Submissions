@@ -61,12 +61,12 @@ public class Evaluator<TClass>(TClass target)
                 var expectStr = expected is int[] expObjArr
                     ? string.Join(", ", expObjArr)
                     : expected.ToString()!;
-                var resultStr = expected is int[] resObjArr
+                var resultStr = res is int[] resObjArr
                     ? string.Join(", ", resObjArr)
-                    : expected.ToString()!;
+                    : res?.ToString() ?? string.Empty;
                 Console.ForegroundColor = success ? ConsoleColor.DarkGreen : ConsoleColor.Red;
                 Console.WriteLine("{0} Input: {1} | Expected: {2} | Received: {3} | Execution time: {4}", avaliation,
-                    paramStr.AddPaddings(8), expectStr.AddPaddings(2), resultStr.AddPaddings(2), _stopwatch.Elapsed);
+                    paramStr.AddPaddings(12), expectStr.AddPaddings(4), resultStr.AddPaddings(4), _stopwatch.Elapsed);
             }
             catch (Exception ex)
             {

@@ -3,7 +3,6 @@ using LeetCode.Attributes;
 using LeetCode.Interfaces;
 
 namespace LeetCode.Exercises;
-[Completed(false)]
 [DisplayName("Remove K Digits")]
 [Code(402)]
 [Description("Given string num representing a non-negative integer num, and an integer k, return the smallest possible integer after removing k digits from num.")]

@@ -4,7 +4,7 @@ using LeetCode.Interfaces;
 
 namespace LeetCode.Exercises;
 [Code(3)]
-[Completed(true)]
+[Completed]
 [DisplayName("Longest Substring Without Repeating Characters")]
 [Description("Given a string s, find the length of the longest substring without repeating characters.")]
 public sealed class LengthOfLongestSubstring : IExercise

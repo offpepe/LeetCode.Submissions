@@ -51,7 +51,7 @@ class Program
     {
         if (args.ElementAtOrDefault(0) == "--all")
         {
-            RunExerciseCollection(Exercises.Where(e => e.GetCustomAttribute<CompletedAttribute>()?.Completed ?? false));
+            RunExerciseCollection(Exercises.Where(e => e.GetCustomAttribute<CompletedAttribute>() != null));
             return;
         }
         var toBeExecuted = Exercises.Where(e => args.Any(a => e.GetCustomAttribute<CodeAttribute>()?.Code == int.Parse(a))).ToArray();

@@ -5,9 +5,9 @@ using LeetCode.Interfaces;
 
 namespace LeetCode.Exercises;
 
-[Completed(true)]
-[DisplayName("Two Sum")]
 [Code(2)]
+[Completed]
+[DisplayName("Two Sum")]
 [Description("Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.")]
 public sealed class TwoSum : IExercise
 {
