@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using LeetCode.Attributes;
 using LeetCode.Interfaces;
 
 namespace LeetCode;
@@ -36,18 +37,35 @@ public class Evaluator<TClass>(TClass target)
     {
         var description = submission.GetCustomAttribute<DescriptionAttribute>();
         var displayName = submission.GetCustomAttribute<DisplayNameAttribute>();
+        var failure = submission.GetCustomAttribute<FailedAttribute>();
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write("NAME: ");
         Console.ForegroundColor = ConsoleColor.DarkMagenta;
         Console.WriteLine("{0}", displayName?.DisplayName ?? submission.Name);
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write("RESULT:");
-        Console.ForegroundColor = description == null ? ConsoleColor.Gray : ConsoleColor.Yellow;
-        Console.WriteLine(" {0} \n", description?.Description ??"NOT SUBMITTED");
+        if (failure != null)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            
+            Console.Write("FAILED: {0}",failure.Reason);
+            Console.ResetColor();
+            Console.WriteLine(string.Empty);
+        }
+        else
+        {
+            Console.Write("RESULT:");
+            Console.ForegroundColor = description == null ? ConsoleColor.Gray : ConsoleColor.Yellow;
+            Console.WriteLine(" {0} \n", description?.Description ?? "NOT SUBMITTED");
+        }
         foreach (var subCase in target.Cases)
         {
             var expected = subCase[0];
+            var expectStr = (expected is int[] expObjArr
+                ? string.Join(", ", expObjArr)
+                : expected.ToString()!).AddPaddings(4);
             var parameters = subCase[1..];
+            var paramStr = string.Join(", ", parameters.Select(ConvertParam)).AddPaddings(12);
             object? res;
             try
             {
@@ -56,23 +74,19 @@ public class Evaluator<TClass>(TClass target)
                     CultureInfo.InvariantCulture);
                 _stopwatch.Stop();
                 var success = res?.ToString() == expected.ToString();
-                var avaliation = success ? "[SUCCESS]" : "[FAILED] ";
-                var paramStr = string.Join(", ", parameters.Select(ConvertParam));
-                var expectStr = expected is int[] expObjArr
-                    ? string.Join(", ", expObjArr)
-                    : expected.ToString()!;
-                var resultStr = res is int[] resObjArr
+                var resultStr = (res is int[] resObjArr
                     ? string.Join(", ", resObjArr)
-                    : res?.ToString() ?? string.Empty;
+                    : res?.ToString() ?? string.Empty)
+                    .AddPaddings(4);
                 Console.ForegroundColor = success ? ConsoleColor.DarkGreen : ConsoleColor.Red;
-                Console.WriteLine("{0} Input: {1} | Expected: {2} | Received: {3} | Execution time: {4}", avaliation,
-                    paramStr.AddPaddings(12), expectStr.AddPaddings(4), resultStr.AddPaddings(4), _stopwatch.Elapsed);
+                Console.WriteLine("{0} Input: {1} | Expected: {2} | Received: {3} | Execution time: {4}",
+                    success ? "[SUCCESS]" : "[FAILED] ", paramStr, expectStr, resultStr, _stopwatch.Elapsed);
             }
             catch (Exception ex)
             {
                 Console.BackgroundColor = ConsoleColor.DarkRed;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("[ERROR] UNHANDLED ERROR WHILE EXECUTING SUBMISSION. MESSAGE: {0}", ex.InnerException?.Message);
+                Console.Write("[ERROR] Input: {0} | Expected: {1} | Received: {2} \n {3}", parameters, expected, ex.InnerException?.Message, ex.InnerException?.StackTrace);
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.WriteLine(string.Empty);
                 break;
