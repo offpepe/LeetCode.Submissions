@@ -86,7 +86,7 @@ public class Evaluator<TClass>(TClass target)
             {
                 Console.BackgroundColor = ConsoleColor.DarkRed;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("[ERROR] Input: {0} | Expected: {1} | Received: {2} \n {3}", parameters, expected, ex.InnerException?.Message, ex.InnerException?.StackTrace);
+                Console.Write("[ERROR] Input: {0} | Expected: {1} | Received: {2} \n {3}", parameters, expected, ex.InnerException?.Message, ex.InnerException?.StackTrace?.ReplaceLineEndings(" "));
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.WriteLine(string.Empty);
                 break;
